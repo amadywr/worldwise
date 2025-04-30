@@ -2,22 +2,23 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 const CitiesContext = createContext()
 
-const BASE_URL = 'http://localhost:3000'
+// const BASE_URL = 'http://localhost:3000'
 
-function CitiesProvider({ children }) {
+export function CitiesProvider({ children }) {
   const [cities, setCities] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [currentCity, setCurrentCity] = useState({})
 
   useEffect(() => {
-    async function fetchCities() {
+    function fetchCities() {
       try {
         setIsLoading(true)
-        const res = await fetch(`${BASE_URL}/cities`)
-        const data = await res.json()
-        setCities(data)
+        const storedCities = localStorage.getItem('cities')
+        if (storedCities) {
+          setCities(JSON.parse(storedCities))
+        }
       } catch (error) {
-        alert('there was an error')
+        alert('There was an error fetching cities from localStorage')
       } finally {
         setIsLoading(false)
       }
@@ -29,11 +30,15 @@ function CitiesProvider({ children }) {
   async function getCity(id) {
     try {
       setIsLoading(true)
-      const res = await fetch(`${BASE_URL}/cities/${id}`)
-      const data = await res.json()
-      setCurrentCity(data)
+      const city = cities.find((city) => city.id === Number(id))
+
+      if (city) {
+        setCurrentCity(city)
+      } else {
+        alert('City not found')
+      }
     } catch (error) {
-      alert('there was an error')
+      alert('There was an error fetching the city')
     } finally {
       setIsLoading(false)
     }
@@ -42,17 +47,12 @@ function CitiesProvider({ children }) {
   async function createCity(newCity) {
     try {
       setIsLoading(true)
-      const res = await fetch(`${BASE_URL}/cities`, {
-        method: 'POST',
-        body: JSON.stringify(newCity),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      const data = await res.json()
-      setCities((cities) => [...cities, data])
+      const cityWithId = { ...newCity, id: Date.now() }
+      const updatedCities = [...cities, cityWithId]
+      setCities(updatedCities)
+      localStorage.setItem('cities', JSON.stringify(updatedCities))
     } catch (error) {
-      alert('there was an error creating the city')
+      alert('There was an error creating the city')
     } finally {
       setIsLoading(false)
     }
@@ -61,13 +61,11 @@ function CitiesProvider({ children }) {
   async function deleteCity(id) {
     try {
       setIsLoading(true)
-      await fetch(`${BASE_URL}/cities/${id}`, {
-        method: 'DELETE',
-      })
-
-      setCities((cities) => cities.filter((city) => city.id !== id))
+      const updatedCities = cities.filter((city) => city.id !== id)
+      setCities(updatedCities)
+      localStorage.setItem('cities', JSON.stringify(updatedCities))
     } catch (error) {
-      alert('there was an error deleting city.')
+      alert('There was an error deleting the city')
     } finally {
       setIsLoading(false)
     }
@@ -89,7 +87,7 @@ function CitiesProvider({ children }) {
   )
 }
 
-function useCities() {
+export function useCities() {
   const context = useContext(CitiesContext)
 
   if (context === undefined)
@@ -98,4 +96,4 @@ function useCities() {
   return context
 }
 
-export { CitiesProvider, useCities }
+// export { CitiesProvider, useCities }
