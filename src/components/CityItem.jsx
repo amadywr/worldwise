@@ -27,7 +27,14 @@ function CityItem({ city }) {
           id === currentCity.id ? styles['cityItem--active'] : ''
         }`}
       >
-        <span className={styles.emoji}>{emoji}</span>
+        <span className={styles.emoji}>
+          {emoji && (
+            <img
+              src={`https://flagcdn.com/24x18/${emoji.toLocaleLowerCase()}.png`}
+              alt=""
+            />
+          )}
+        </span>
         <h3 className={styles.name}>{cityName}</h3>
         <time className={styles.date}>{formatDate(date)}</time>
         <button className={styles.deleteBtn} onClick={handleClick}>

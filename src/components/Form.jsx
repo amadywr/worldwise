@@ -52,7 +52,7 @@ function Form() {
 
         setCityName(data.city || data.locality || '')
         setCountry(data.countryName)
-        setEmoji(convertToEmoji(data.countryCode))
+        setEmoji(data.countryCode)
       } catch (error) {
         setGeocodingError(error.message)
       } finally {
@@ -100,7 +100,14 @@ function Form() {
           onChange={(e) => setCityName(e.target.value)}
           value={cityName}
         />
-        <span className={styles.flag}>{emoji}</span>
+        <span className={styles.flag}>
+          {emoji && (
+            <img
+              src={`https://flagcdn.com/16x12/${emoji.toLocaleLowerCase()}.png`}
+              alt=""
+            />
+          )}
+        </span>
       </div>
 
       <div className={styles.row}>
