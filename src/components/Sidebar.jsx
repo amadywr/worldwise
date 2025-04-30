@@ -12,6 +12,8 @@ function Sidebar() {
       <Outlet />
 
       <footer className={styles.footer}>
+        <em>All data is saved in your browser.</em>
+
         <p className={styles.copyright}>
           &copy; Copyright {new Date().getFullYear()} by WorldWise Inc.
         </p>

@@ -11,6 +11,14 @@
 
 .footer {
   margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.footer em {
+  text-align: center;
+  font-size: 1.2rem;
 }
 
 .copyright {
